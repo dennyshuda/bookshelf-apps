@@ -110,6 +110,7 @@ function addToIncompleteList(index) {
 }
 
 function removeIncompleteBook(index) {
+  alert(`Buku ${incompleteBookList[index].title} telah di hapus!`);
   incompleteBookList.splice(index, 1);
   localStorage.setItem(
     localStorageIncomplete,
@@ -119,6 +120,7 @@ function removeIncompleteBook(index) {
 }
 
 function removeCompleteBook(index) {
+  alert(`Buku ${completeBookList[index].title} telah di hapus!`);
   completeBookList.splice(index, 1);
   localStorage.setItem(localStorageComplete, JSON.stringify(completeBookList));
   displayCompleteBooks();
