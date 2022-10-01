@@ -17,7 +17,7 @@ const localStorageComplete = "COMPLETE_BOOK";
 const localStorageIncomplete = "INCOMPLETE_BOOK";
 
 function checkLocalStorage() {
-  return typeof Storage !== "undefined";
+  return typeof Storage !== undefined;
 }
 
 window.addEventListener("load", () => {
@@ -37,7 +37,6 @@ function importDataFromLocal() {
   );
   for (const key in completeBookFromStorage) {
     completeBookList.push(completeBookFromStorage[key]);
-    console.log(completeBookFromStorage[key]);
   }
 
   const incompleteBookFromStorage = JSON.parse(
@@ -45,7 +44,6 @@ function importDataFromLocal() {
   );
   for (const key in incompleteBookFromStorage) {
     incompleteBookList.push(incompleteBookFromStorage[key]);
-    console.log(incompleteBookFromStorage[key]);
   }
 }
 
