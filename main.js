@@ -13,6 +13,42 @@ const searchBookTitle = document.getElementById("searchBookTitle");
 const completeBookList = [];
 const incompleteBookList = [];
 
+const localStorageComplete = "COMPLETE_BOOK";
+const localStorageIncomplete = "INCOMPLETE_BOOK";
+
+function checkLocalStorage() {
+  return typeof Storage !== "undefined";
+}
+
+window.addEventListener("load", () => {
+  if (localStorage.getItem(localStorageComplete) !== null) {
+    importDataFromLocal();
+    displayCompleteBooks();
+  }
+
+  if (localStorage.getItem(localStorageIncomplete) !== null) {
+    displayIncompleteBooks();
+  }
+});
+
+function importDataFromLocal() {
+  const completeBookFromStorage = JSON.parse(
+    localStorage.getItem(localStorageComplete)
+  );
+  for (const key in completeBookFromStorage) {
+    completeBookList.push(completeBookFromStorage[key]);
+    console.log(completeBookFromStorage[key]);
+  }
+
+  const incompleteBookFromStorage = JSON.parse(
+    localStorage.getItem(localStorageIncomplete)
+  );
+  for (const key in incompleteBookFromStorage) {
+    incompleteBookList.push(incompleteBookFromStorage[key]);
+    console.log(incompleteBookFromStorage[key]);
+  }
+}
+
 function displayCompleteBooks() {
   let htmlElement = "";
   for (let index = 0; index < completeBookList.length; index++) {
@@ -51,6 +87,11 @@ function addToCompleteList(index) {
   incompleteBookList[index].isComplete = true;
   completeBookList.push(incompleteBookList[index]);
   incompleteBookList.splice(index, 1);
+  localStorage.setItem(localStorageComplete, JSON.stringify(completeBookList));
+  localStorage.setItem(
+    localStorageIncomplete,
+    JSON.stringify(incompleteBookList)
+  );
   displayIncompleteBooks();
   displayCompleteBooks();
 }
@@ -59,17 +100,27 @@ function addToIncompleteList(index) {
   completeBookList[index].isComplete = false;
   incompleteBookList.push(completeBookList[index]);
   completeBookList.splice(index, 1);
+  localStorage.setItem(localStorageComplete, JSON.stringify(completeBookList));
+  localStorage.setItem(
+    localStorageIncomplete,
+    JSON.stringify(incompleteBookList)
+  );
   displayIncompleteBooks();
   displayCompleteBooks();
 }
 
 function removeIncompleteBook(index) {
   incompleteBookList.splice(index, 1);
+  localStorage.setItem(
+    localStorageIncomplete,
+    JSON.stringify(incompleteBookList)
+  );
   displayIncompleteBooks();
 }
 
 function removeCompleteBook(index) {
   completeBookList.splice(index, 1);
+  localStorage.setItem(localStorageComplete, JSON.stringify(completeBookList));
   displayCompleteBooks();
 }
 
@@ -82,7 +133,14 @@ function addBookData() {
       year: Number(inputBookYear.value),
       isComplete: true,
     });
+    localStorage.setItem(
+      localStorageComplete,
+      JSON.stringify(completeBookList)
+    );
     displayCompleteBooks();
+    inputBookTitle.value = "";
+    inputBookAuthor.value = "";
+    inputBookYear.value = "";
   } else {
     incompleteBookList.push({
       id: +new Date(),
@@ -91,11 +149,47 @@ function addBookData() {
       year: Number(inputBookYear.value),
       isComplete: false,
     });
+    localStorage.setItem(
+      localStorageIncomplete,
+      JSON.stringify(incompleteBookList)
+    );
     displayIncompleteBooks();
+    inputBookTitle.value = "";
+    inputBookAuthor.value = "";
+    inputBookYear.value = "";
   }
 }
 
 inputBook.addEventListener("submit", (event) => {
   event.preventDefault();
   addBookData();
+});
+
+searchBook.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const searchText = document
+    .getElementById("searchBookTitle")
+    .value.toLowerCase();
+
+  const incomplete = document.querySelectorAll("article");
+  const complete = document.querySelectorAll("article");
+
+  for (let i = 0; i < incomplete.length; i++) {
+    let a = incomplete[i].getElementsByTagName("h3")[0];
+    let txtValue = a.textContent || a.innerText;
+    if (txtValue.toLowerCase().indexOf(searchText) > -1) {
+      incomplete[i].style.display = "";
+    } else {
+      incomplete[i].style.display = "none";
+    }
+  }
+  for (let i = 0; i < complete.length; i++) {
+    let a = complete[i].getElementsByTagName("h3")[0];
+    let txtValue = a.textContent || a.innerText;
+    if (txtValue.toLowerCase().indexOf(searchText) > -1) {
+      complete[i].style.display = "";
+    } else {
+      complete[i].style.display = "none";
+    }
+  }
 });
